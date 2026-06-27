@@ -1,0 +1,232 @@
+.audio-empty,
+.audio-loading,
+.audio-error {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-inverse);
+  gap: 12px;
+}
+
+.audio-empty-icon {
+  font-size: 3rem;
+  animation: floatAudio 3s ease-in-out infinite;
+}
+
+.audio-loading p,
+.audio-empty p,
+.audio-error p {
+  color: var(--text-muted);
+  max-width: 420px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.audio-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-top: 3px solid var(--text-inverse);
+  border-radius: 50%;
+  animation: spinAudio 1s linear infinite;
+  margin-bottom: 8px;
+}
+
+.briefing-player {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.player-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.audio-deck-header {
+  width: 100%;
+  text-align: left;
+}
+
+.deck-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.audio-deck-header h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-inverse);
+  margin: 4px 0 0 0;
+}
+
+.audio-wave-container {
+  width: 100%;
+  background: rgba(17, 19, 24, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.audio-waves {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 40px;
+  width: 100%;
+}
+
+.audio-waves .bar {
+  display: inline-block;
+  width: 3px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  transition: height 0.1s ease;
+}
+
+/* Bouncing Wave Animation when active */
+.audio-waves.is-active .bar {
+  background-color: var(--text-inverse);
+  animation: bounceWave 1.2s ease-in-out infinite alternate;
+}
+
+.audio-waves.is-active .bar1 { animation-delay: 0.1s; }
+.audio-waves.is-active .bar2 { animation-delay: 0.3s; }
+.audio-waves.is-active .bar3 { animation-delay: 0.6s; }
+.audio-waves.is-active .bar4 { animation-delay: 0.2s; }
+.audio-waves.is-active .bar5 { animation-delay: 0.4s; }
+.audio-waves.is-active .bar6 { animation-delay: 0.7s; }
+.audio-waves.is-active .bar7 { animation-delay: 0.5s; }
+.audio-waves.is-active .bar8 { animation-delay: 0.3s; }
+
+.audio-time-stamp {
+  font-size: 0.82rem;
+  font-family: monospace;
+  color: var(--text-muted);
+}
+
+.audio-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--text-inverse);
+  transition: width 0.2s linear;
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.control-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-inverse);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.main-play-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.main-play-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--text-inverse);
+  transform: scale(1.05);
+}
+
+.stop-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 0.95rem;
+}
+
+.stop-btn:hover {
+  background: rgba(255, 75, 75, 0.15);
+  border-color: rgba(255, 75, 75, 0.4);
+}
+
+.briefing-transcript {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 14px;
+  text-align: left;
+}
+
+.briefing-transcript summary {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+
+.briefing-transcript summary:hover {
+  color: var(--text-inverse);
+}
+
+.transcript-body {
+  margin-top: 10px;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: pre-line;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+@keyframes spinAudio {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floatAudio {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes bounceWave {
+  0% { height: 6px; }
+  100% { height: 36px; }
+}

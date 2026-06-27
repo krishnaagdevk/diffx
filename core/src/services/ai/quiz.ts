@@ -1,0 +1,97 @@
+import { getCodexThread } from './codexClient'
+import { CODEX_MODELS } from './models'
+import { normalizeToText } from './normalize'
+import { extractJsonObject } from './commitMessage'
+
+export type QuizQuestion = {
+  id: string
+  prompt: string
+  options: string[]
+  answerIndex: number
+  explanation?: string
+}
+
+export type QuizPayload = {
+  questions: QuizQuestion[]
+}
+
+function parseQuiz(raw: unknown): QuizPayload | null {
+  const text = normalizeToText(raw)
+  if (!text) return null
+  try {
+    const parsed = extractJsonObject(text) as QuizPayload | null
+    if (!parsed || !Array.isArray(parsed.questions)) return null
+    const questions = parsed.questions
+      .map((question, index) => {
+        if (!question || typeof question !== 'object') return null
+        const record = question as Record<string, unknown>
+        const prompt = typeof record.prompt === 'string' ? record.prompt.trim() : ''
+        const options = Array.isArray(record.options)
+          ? record.options.filter((option) => typeof option === 'string').map((option) => option.trim())
+          : []
+        const answerIndex =
+          typeof record.answerIndex === 'number' && Number.isFinite(record.answerIndex)
+            ? record.answerIndex
+            : -1
+        if (!prompt || options.length !== 4 || answerIndex < 0 || answerIndex > 3) {
+          return null
+        }
+        const q: QuizQuestion = {
+          id: typeof record.id === 'string' && record.id.trim() ? record.id : `q${index + 1}`,
+          prompt,
+          options,
+          answerIndex,
+        }
+        if (typeof record.explanation === 'string' && record.explanation.trim()) {
+          q.explanation = record.explanation.trim()
+        }
+        return q
+      })
+      .filter((question): question is QuizQuestion => question !== null)
+    if (!questions.length) return null
+    return { questions }
+  } catch {
+    return null
+  }
+}
+
+type QuizInput = {
+  repoPath: string | null
+  fullDiff: string
+  questionCount: number
+  rules?: string | null
+  includeExplanations?: boolean
+}
+
+export async function buildQuiz({
+  repoPath,
+  fullDiff,
+  questionCount,
+  rules,
+  includeExplanations,
+}: QuizInput): Promise<QuizPayload> {
+  const thread = getCodexThread(CODEX_MODELS.quiz)
+  const rulesBlock = rules?.trim()
+  const includeExplanationsFlag = includeExplanations !== false
+  const schema = includeExplanationsFlag
+    ? '{"questions":[{"id":"q1","prompt":"...", "options":["A","B","C","D"], "answerIndex":0, "explanation":"..."}]}'
+    : '{"questions":[{"id":"q1","prompt":"...", "options":["A","B","C","D"], "answerIndex":0}]}'
+  const prompt = [
+    'You are DiffX. Create a comprehension quiz about the code changes.',
+    'Use ONLY the provided diff context.',
+    'Return ONLY JSON with shape:',
+    schema,
+    `Number of questions: ${questionCount}`,
+    `Repository: ${repoPath ?? 'unknown'}`,
+    ...(rulesBlock ? ['--- RULES ---', rulesBlock] : []),
+    '--- CONTEXT ---',
+    fullDiff,
+  ].join('\n')
+
+  const response = await thread.run(prompt, { json: true })
+  const parsed = parseQuiz(response)
+  if (!parsed) {
+    throw new Error('Quiz parsing failed')
+  }
+  return parsed
+}
