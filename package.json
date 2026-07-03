@@ -6,8 +6,11 @@
     "core"
   ],
   "scripts": {
-    "dev": "bun run dev:frontend",
-    "dev:frontend": "bun --cwd frontend run dev",
-    "dev:core": "bun --cwd core run dev"
+    "dev": "concurrently -n \"core,frontend\" -c \"blue,green\" \"bun run dev:core\" \"bun run dev:frontend\"",
+    "dev:frontend": "bun run --cwd frontend dev",
+    "dev:core": "bun run --cwd core dev"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
   }
 }
