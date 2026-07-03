@@ -143,7 +143,7 @@ async function callGemini(prompt: string, opts?: AICallOpts): Promise<string> {
   if (systemText) body.systemInstruction = { parts: [{ text: systemText }] }
 
   const response = await fetchWithTimeout(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.geminiApiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.geminiApiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

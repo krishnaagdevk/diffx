@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 const DEMO_PRESETS = [
   { label: 'Vite 5', url: 'https://github.com/vitejs/vite/pull/14290' },
-  { label: 'React Router', url: 'https://github.com/remix-run/react-router/pull/10469' },
+  { label: 'React Router', url: 'https://github.com/remix-run/react-router/pull/15164' },
   { label: 'Prisma', url: 'https://github.com/prisma/prisma/pull/21832' },
 ]
 import type { CommitMessageSettings } from '../../utils/settings'
@@ -64,7 +64,6 @@ type SidebarProps = {
   onFileSearchClose: () => void
   riskScore: { score: number; reasons: string[] } | null
   depChanges: string[]
-  criticalUnacknowledged: number
 }
 
 export function Sidebar({
@@ -72,7 +71,7 @@ export function Sidebar({
   unstagedFiles,
   selectedFile,
   repoPath,
-  hasQuizResult,
+  // hasQuizResult,
   strictMode,
   onToggleStrictMode,
   strictModeNotice,
@@ -81,7 +80,7 @@ export function Sidebar({
   onStageFile,
   onUnstageFile,
   onCommit,
-  onPush,
+  // onPush,
   onStash,
   onPublicRepoLoaded,
   onSwitchRepo,
@@ -106,8 +105,6 @@ export function Sidebar({
   onFileSearchChange,
   onFileSearchToggle,
   onFileSearchClose,
-  riskScore,
-  criticalUnacknowledged,
 }: SidebarProps) {
   const totalFiles = stagedFiles.length + unstagedFiles.length
   const [commitOpen, setCommitOpen] = useState(false)
@@ -116,8 +113,8 @@ export function Sidebar({
   const resolvedCommitRef = (commitInputRef as React.RefObject<HTMLTextAreaElement>) ?? internalCommitRef
   const [commitLoading, setCommitLoading] = useState(false)
   const [commitError, setCommitError] = useState<string | null>(null)
-  const [pushLoading, setPushLoading] = useState(false)
-  const [pushError, setPushError] = useState<string | null>(null)
+  // const [pushLoading, setPushLoading] = useState(false)
+  const [pushError] = useState<string | null>(null)
   const [autoGenerateLoading, setAutoGenerateLoading] = useState(false)
   const [stashLoading, setStashLoading] = useState(false)
   const [stashError, setStashError] = useState<string | null>(null)
@@ -137,30 +134,25 @@ export function Sidebar({
   // Branch compare
   const [branchOpen, setBranchOpen] = useState(false)
 
-  // HITL: high-risk push confirmation
-  const [pushRiskConfirmOpen, setPushRiskConfirmOpen] = useState(false)
-
   // Commit gate unlock animation
-  const prevHasQuizResult = useRef(hasQuizResult)
-  const [showUnlockAnim, setShowUnlockAnim] = useState(false)
-  useEffect(() => {
-    if (!prevHasQuizResult.current && hasQuizResult && strictMode) {
-      setShowUnlockAnim(true)
-      const t = setTimeout(() => setShowUnlockAnim(false), 1800)
-      return () => clearTimeout(t)
-    }
-    prevHasQuizResult.current = hasQuizResult
-  }, [hasQuizResult, strictMode])
+  // const prevHasQuizResult = useRef(hasQuizResult)
+  // const [showUnlockAnim, setShowUnlockAnim] = useState(false)
+  // useEffect(() => {
+  //   if (!prevHasQuizResult.current && hasQuizResult && strictMode) {
+  //     setShowUnlockAnim(true)
+  //     const t = setTimeout(() => setShowUnlockAnim(false), 1800)
+  //     return () => clearTimeout(t)
+  //   }
+  //   prevHasQuizResult.current = hasQuizResult
+  // }, [hasQuizResult, strictMode])
 
   // Annotation for selected file
   const selectedAnnotation = selectedFile ? (annotations[selectedFile.path] ?? '') : ''
 
-  const canCommit = Boolean(repoPath) && stagedFiles.length > 0
-  // HITL gate: quiz must pass AND no unacknowledged critical AI findings
-  const canCommitStrict = canCommit && (!strictMode || hasQuizResult) && criticalUnacknowledged === 0
-  const canPush = Boolean(repoPath) && (!strictMode || hasQuizResult)
+  // const canCommit = Boolean(repoPath) && stagedFiles.length > 0
+  // const canCommitStrict = canCommit && (!strictMode || hasQuizResult)
+  // const canPush = Boolean(repoPath) && (!strictMode || hasQuizResult)
   const hasChanges = totalFiles > 0
-  const isHighRisk = (riskScore?.score ?? 0) >= 8
 
   const handleLoadPublicUrl = async (urlOverride?: string) => {
     const url = (urlOverride ?? publicUrl).trim()
@@ -217,17 +209,17 @@ export function Sidebar({
     }
   }
 
-  const handlePush = async () => {
-    setPushLoading(true)
-    setPushError(null)
-    try {
-      await onPush()
-    } catch (error) {
-      setPushError(error instanceof Error ? error.message : 'Failed to push.')
-    } finally {
-      setPushLoading(false)
-    }
-  }
+  // const handlePush = async () => {
+  //   setPushLoading(true)
+  //   setPushError(null)
+  //   try {
+  //     await onPush()
+  //   } catch (error) {
+  //     setPushError(error instanceof Error ? error.message : 'Failed to push.')
+  //   } finally {
+  //     setPushLoading(false)
+  //   }
+  // }
 
   const handleAutoGenerate = async () => {
     if (!hasChanges) return
@@ -323,7 +315,7 @@ export function Sidebar({
           value={publicUrl}
           onChange={(e) => setPublicUrl(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && publicUrl.trim() && !publicLoading) void handleLoadPublicUrl() }}
-          placeholder="GitHub PR/Commit URL..."
+          placeholder="GitHub PR URL..."
           disabled={publicLoading}
           className="public-url-input"
         />
@@ -600,8 +592,7 @@ export function Sidebar({
             {strictModeNotice}
           </div>
         ) : null}
-        <div className="sidebar-action-row">
-          {/* HITL Gate 1 — commit locked until quiz passed AND all AI criticals acknowledged */}
+        {/* <div className="sidebar-action-row">
           <button
             type="button"
             className={[
@@ -618,84 +609,41 @@ export function Sidebar({
             title={
               strictMode && !hasQuizResult
                 ? '🔒 Take a quiz on your diff before committing'
-                : criticalUnacknowledged > 0
-                  ? `🔒 Acknowledge ${criticalUnacknowledged} critical AI finding(s) in the Review tab`
-                  : 'Commit staged changes'
+                : 'Commit staged changes'
             }
           >
-            {strictMode && !hasQuizResult
-              ? '🔒 Commit'
-              : criticalUnacknowledged > 0
-                ? `🔒 Commit (${criticalUnacknowledged})`
-                : strictMode && hasQuizResult
-                  ? '✓ Commit'
-                  : 'Commit'}
+            {strictMode && !hasQuizResult ? '🔒 Commit' : strictMode && hasQuizResult ? '✓ Commit' : 'Commit'}
           </button>
-
-          {/* HITL Gate 2 — push requires explicit confirmation when risk ≥ 8 */}
+          <button
+            type="button"
+            className="sidebar-action-btn"
+            onClick={() => void handlePush()}
+            disabled={!canPush || pushLoading}
+            title={
+              canPush
+                ? 'Push to remote'
+                : strictMode
+                  ? "You can't push code without taking a quiz."
+                  : 'Push to remote'
+            }
+          >
+            Push
+          </button>
           <button
             type="button"
             className="sidebar-action-btn"
             onClick={() => {
-              if (isHighRisk && canPush) { setPushRiskConfirmOpen(true); return }
-              void handlePush()
+              if (!hasChanges) return
+              setStashConfirmOpen(true)
+              setStashError(null)
             }}
-            disabled={!canPush || pushLoading}
-            title={
-              !canPush
-                ? strictMode ? "Complete a quiz before pushing." : 'Nothing to push'
-                : isHighRisk ? `⚠ Risk ${riskScore!.score}/10 — confirmation required` : 'Push to remote'
-            }
-          >
-            {pushLoading ? '…' : isHighRisk && canPush ? '⚠ Push' : 'Push'}
-          </button>
-
-          <button
-            type="button"
-            className="sidebar-action-btn"
-            onClick={() => { if (!hasChanges) return; setStashConfirmOpen(true); setStashError(null) }}
             disabled={!hasChanges || stashLoading}
           >
             Stash
           </button>
-        </div>
-
-        {/* HITL: critical findings notice */}
-        {criticalUnacknowledged > 0 && (
-          <div className="hitl-critical-notice">
-            🔒 {criticalUnacknowledged} critical finding{criticalUnacknowledged > 1 ? 's' : ''} must be reviewed in the <strong>Review</strong> tab before committing.
-          </div>
-        )}
-
-        {/* HITL: high-risk push confirmation */}
-        {pushRiskConfirmOpen && (
-          <div className="sidebar-commit hitl-risk-confirm">
-            <div className="hitl-risk-header">
-              ⚠ Risk Score: {riskScore?.score}/10
-            </div>
-            <div className="hitl-risk-reasons">
-              {riskScore?.reasons.map((r, i) => <div key={i}>· {r}</div>)}
-            </div>
-            <div className="hitl-risk-question">
-              You are pushing high-risk changes. Confirm you have reviewed them.
-            </div>
-            <div className="sidebar-commit-actions">
-              <button
-                type="button"
-                onClick={() => { setPushRiskConfirmOpen(false); void handlePush() }}
-                disabled={pushLoading}
-              >
-                {pushLoading ? '…' : 'I understand, Push'}
-              </button>
-              <button type="button" onClick={() => setPushRiskConfirmOpen(false)} disabled={pushLoading}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
-
-        {pushError ? <div className="sidebar-action-error">{pushError}</div> : null}
-        {stashError ? <div className="sidebar-action-error">{stashError}</div> : null}
+        </div> */}
+         {pushError ? <div className="sidebar-action-error">{pushError}</div> : null} 
+         {stashError ? <div className="sidebar-action-error">{stashError}</div> : null} 
         {commitOpen ? (
           <div className="sidebar-commit">
             <label className="sidebar-commit-label" htmlFor="sidebar-commit-message">

@@ -21,7 +21,6 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { DiffToolbar } from './components/diff/DiffToolbar'
 import { DiffViewer } from './components/diff/DiffViewer'
-import { DiffSearch } from './components/diff/DiffSearch'
 import { SettingsDrawer } from './components/settings/SettingsDrawer'
 import { Sidebar, type FileStatus, type SidebarFile } from './components/sidebar/Sidebar'
 import { ImpactMapper } from './components/impact/ImpactMapper'
@@ -1060,11 +1059,6 @@ function App() {
         onFileSearchClose={() => { setFileSearch(''); setFileSearchOpen(false) }}
         riskScore={riskScore}
         depChanges={depChanges}
-        criticalUnacknowledged={Math.max(
-          0,
-          (codeReviewResult?.findings ?? []).filter(f => f.severity === 'critical').length -
-          acknowledgedFindings.size
-        )}
       />
       <main className="main">
         <div className={`workspace ${reviewOpen ? 'review-open' : 'review-closed'}`}>

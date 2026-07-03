@@ -74,34 +74,39 @@
   margin: 4px 0 0 0;
 }
 
-.audio-wave-container {
+/* Unified Audio Deck styles */
+.audio-deck {
   width: 100%;
   background: rgba(17, 19, 24, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  padding: 24px;
+  border-radius: 8px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 16px;
+  gap: 12px;
   box-sizing: border-box;
+}
+
+.deck-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .audio-waves {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 4px;
-  height: 40px;
-  width: 100%;
+  height: 24px;
 }
 
 .audio-waves .bar {
   display: inline-block;
-  width: 3px;
+  width: 2.5px;
   height: 6px;
   background-color: rgba(255, 255, 255, 0.25);
-  border-radius: 3px;
+  border-radius: 2px;
   transition: height 0.1s ease;
 }
 
@@ -121,7 +126,7 @@
 .audio-waves.is-active .bar8 { animation-delay: 0.3s; }
 
 .audio-time-stamp {
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-family: monospace;
   color: var(--text-muted);
 }
@@ -145,11 +150,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .control-btn {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-inverse);
   cursor: pointer;
@@ -160,25 +165,25 @@
 }
 
 .main-play-btn {
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  font-size: 1.2rem;
-  border-color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.08);
+  font-size: 1rem;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .main-play-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.14);
   border-color: var(--text-inverse);
   transform: scale(1.05);
 }
 
 .stop-btn {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
 }
 
 .stop-btn:hover {
@@ -208,14 +213,167 @@
 
 .transcript-body {
   margin-top: 10px;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.72);
-  white-space: pre-line;
-  max-height: 150px;
+  color: rgba(255, 255, 255, 0.8);
+  max-height: 180px;
   overflow-y: auto;
   padding-right: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
+
+.transcript-body h1,
+.transcript-body h2,
+.transcript-body h3,
+.transcript-body h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 14px 0 6px 0;
+  color: var(--text-inverse);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 3px;
+}
+
+.transcript-body h1:first-child,
+.transcript-body h2:first-child,
+.transcript-body h3:first-child {
+  margin-top: 0;
+}
+
+.transcript-body p {
+  margin: 0 0 10px 0;
+}
+
+.transcript-body p:last-child {
+  margin-bottom: 0;
+}
+
+.transcript-body ul, .transcript-body ol {
+  margin: 0 0 10px 18px;
+  padding: 0;
+}
+
+.transcript-body li {
+  margin-bottom: 4px;
+}
+
+.transcript-body strong {
+  color: var(--text-inverse);
+  font-weight: 600;
+}
+
+/* Settings and Voice selectors */
+.player-settings {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.settings-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.setting-group.voice-group {
+  flex: 2;
+}
+
+.setting-group.speed-group {
+  flex: 1;
+}
+
+.setting-group label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.settings-select {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  background: rgba(17, 19, 24, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: var(--text-inverse);
+  cursor: pointer;
+  outline: none;
+  height: 32px;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-select:hover, .settings-select:focus {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+}
+
+.settings-select option {
+  background: #111318;
+  color: #fff;
+}
+
+.regenerate-btn {
+  width: 100%;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: var(--text-inverse);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.regenerate-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.regenerate-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.regenerate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 
 @keyframes spinAudio {
   to { transform: rotate(360deg); }
@@ -230,3 +388,4 @@
   0% { height: 6px; }
   100% { height: 36px; }
 }
+
