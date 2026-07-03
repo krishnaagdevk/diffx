@@ -12,6 +12,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "hono": "^4.12.27",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
